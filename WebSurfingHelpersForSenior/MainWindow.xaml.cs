@@ -20,9 +20,23 @@ namespace WebSurfingHelpersForSenior
     /// </summary>
     public partial class MainWindow : Window
     {
+        private double currentZoomLevel = 0.0;
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            currentZoomLevel += 0.2;
+            webView.ZoomLevel = currentZoomLevel;
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            currentZoomLevel -= 0.2;
+            webView.ZoomLevel = currentZoomLevel;
         }
     }
 }
