@@ -332,64 +332,33 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             {
                 string jsMainTextScript = @"
 (() => {
-  function getMainTextFromDocument(doc) {
-    const isProbablyContent = (el) => {
-      const classes = el.className?.toLowerCase() || '';
-      const id = el.id?.toLowerCase() || '';
-      return !classes.includes('ad') && !id.includes('ad') &&
-             !classes.includes('footer') && !id.includes('footer') &&
-             !classes.includes('comment') && !id.includes('comment') &&
-             !classes.includes('aside') && !id.includes('aside');
-    };
-
+  function getMainText() {
     const mainTags = ['main', 'article', 'section'];
     for (const tag of mainTags) {
-      const el = doc.querySelector(tag);
-      if (el && el.innerText.trim().length > 200 && isProbablyContent(el)) {
+      const el = document.querySelector(tag);
+      if (el && el.innerText.trim().length > 300) {
         return el.innerText.trim();
       }
     }
 
-    const divs = Array.from(doc.querySelectorAll('div'))
-      .filter(div => {
-        const len = (div.innerText || '').trim().length;
-        return len > 200 && isProbablyContent(div);
-      })
-      .map(div => ({
-        el: div,
-        length: div.innerText.trim().length
-      }))
-      .sort((a, b) => b.length - a.length);
+    // 텍스트가 많은 div 찾기
+    const divs = Array.from(document.querySelectorAll('div')).map(div => ({
+      el: div,
+      length: (div.innerText || '').trim().length
+    }));
+    divs.sort((a, b) => b.length - a.length);
 
-    if (divs.length > 0) {
+    if (divs.length > 0 && divs[0].length > 300) {
       return divs[0].el.innerText.trim();
     }
 
-    return doc.body?.innerText?.trim() || '';
+    // fallback
+    return document.body.innerText.trim();
   }
 
-  try {
-    const fromDoc = getMainTextFromDocument(document);
-    if (fromDoc.length > 200) return fromDoc;
-
-    const iframes = document.querySelectorAll('iframe');
-    for (const iframe of iframes) {
-      try {
-        const doc = iframe.contentDocument;
-        if (doc) {
-          const text = getMainTextFromDocument(doc);
-          if (text.length > 200) return text;
-        }
-      } catch (e) {}
-    }
-
-    return '';
-  } catch (e) {
-    return '';
-  }
+  return getMainText();
 })()
 ";
-
 
                 var fullTextResult = await winFormsBrowser.EvaluateScriptAsync(jsMainTextScript);
                 if (fullTextResult.Success && fullTextResult.Result is string fullText && !string.IsNullOrWhiteSpace(fullText))
@@ -408,7 +377,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
             else
             {
-                CustomMessageBox.Show("읽을 텍스트가 없어요. \n읽고 싶은 텍스트를 마우스로 선택해 주세요.\n(글자 위에 클릭 후 쭉 움직이기)", this);
+                CustomMessageBox.Show("읽을 텍스트가 없어요. 읽고 싶은 텍스트를 마우스로 선택해 주세요.\n(글자 위에 클릭 후 쭉 움직이기", this);
             }
         }
 
