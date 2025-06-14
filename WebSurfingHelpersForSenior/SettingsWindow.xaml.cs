@@ -34,5 +34,10 @@ namespace WebSurfingHelpersForSenior
                 CustomMessageBox.Show("홈페이지가 설정되었습니다.", "확인", MessageBoxImage.Information, this);
             }
         }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

@@ -141,5 +141,53 @@ namespace WebSurfingHelpersForSenior.Properties {
                 this["FavoritesJson"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-0.5")]
+        public double ZoomLevel {
+            get {
+                return ((double)(this["ZoomLevel"]));
+            }
+            set {
+                this["ZoomLevel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double FontScale {
+            get {
+                return ((double)(this["FontScale"]));
+            }
+            set {
+                this["FontScale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MediaFilterOff {
+            get {
+                return ((bool)(this["MediaFilterOff"]));
+            }
+            set {
+                this["MediaFilterOff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.naver.com")]
+        public string LastVisitedUrl {
+            get {
+                return ((string)(this["LastVisitedUrl"]));
+            }
+            set {
+                this["LastVisitedUrl"] = value;
+            }
+        }
     }
 }

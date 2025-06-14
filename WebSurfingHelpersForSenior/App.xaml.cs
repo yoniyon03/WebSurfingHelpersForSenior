@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using WebSurfingHelpersForSenior.Properties;
 
 namespace WebSurfingHelpersForSenior
 {
@@ -13,5 +14,23 @@ namespace WebSurfingHelpersForSenior
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            /*Settings.Default.SkipTutorial = false;
+            Settings.Default.Save();*/
+
+            base.OnStartup(e);
+
+            if (Settings.Default.SkipTutorial)
+            {
+                var main = new MainWindow();
+                main.Show();
+            }
+            else
+            {
+                var tutorial = new TutorialWindow();
+                tutorial.Show(); // 팝업 먼저 띄우기, 이 안에서 MainWindow 열도록 처리
+            }
+        }
     }
 }
