@@ -1,7 +1,9 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -12,9 +14,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Drawing;
-using WinForms = System.Windows.Forms;
 using System.Windows.Threading;
+using WinForms = System.Windows.Forms;
 
 
 
@@ -73,8 +74,7 @@ namespace WebSurfingHelpersForSenior
         // 글씨 크기
         private double currentFontSize = 1.0;
 
-        // 고대비
-        private bool isHighContrast = false;
+
 
 
 
@@ -126,6 +126,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                             if (isItalic) style |= System.Drawing.FontStyle.Italic;
 
                             var savedFont = new System.Drawing.Font(fontName, fontSize, style);
+
                             ApplyBrowserFont(savedFont);
                         }
                     });
@@ -269,23 +270,134 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             string selectedText = "";
 
             // 1️⃣ 웹브라우저 안에서 선택된 텍스트 가져오기
-            var result = await winFormsBrowser.EvaluateScriptAsync("window.getSelection().toString();");
-            if (result.Success && result.Result is string browserText && !string.IsNullOrWhiteSpace(browserText))
+            string jsGetSelectedText = @"
+(() => {
+  try {
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) {
+      return sel.toString().trim();
+    }
+
+    const iframes = document.querySelectorAll('iframe');
+    for (const iframe of iframes) {
+      try {
+        const iframeSel = iframe.contentWindow?.getSelection();
+        if (iframeSel && iframeSel.toString().trim().length > 0) {
+          return iframeSel.toString().trim();
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+
+    return '';
+  } catch (e) {
+    return '';
+  }
+})()
+";
+
+            var browserResult = await winFormsBrowser.EvaluateScriptAsync(jsGetSelectedText);
+
+            if (browserResult.Success && browserResult.Result is string browserText && !string.IsNullOrWhiteSpace(browserText))
             {
                 selectedText = browserText;
             }
-            else
+
+            // 2️⃣ 사이드바 TextBox 중 선택된 텍스트 가져오기
+            if (string.IsNullOrWhiteSpace(selectedText))
             {
-                // 2️⃣ 사이드바 TextBox에서 선택된 텍스트 가져오기 (예: AiSearchResultTextBox)
-                if (AiSearchResultTextBox.IsVisible && !string.IsNullOrWhiteSpace(AiSearchResultTextBox.SelectedText))
+                foreach (var child in LogicalTreeHelper.GetChildren(this))
                 {
-                    selectedText = AiSearchResultTextBox.SelectedText;
-                }
-                else if (WhatIsThisPageResultTextBox.IsVisible && !string.IsNullOrWhiteSpace(WhatIsThisPageResultTextBox.SelectedText))
-                {
-                    selectedText = WhatIsThisPageResultTextBox.SelectedText;
+                    if (child is DependencyObject parent)
+                    {
+                        var textBoxes = FindVisualChildren<System.Windows.Controls.TextBox>(parent);
+                        foreach (var tb in textBoxes)
+                        {
+                            if (tb.IsVisible && !string.IsNullOrWhiteSpace(tb.SelectedText))
+                            {
+                                selectedText = tb.SelectedText;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(selectedText)) break;
                 }
             }
+
+
+            // 3️⃣ 그래도 텍스트가 없다면, 웹페이지 "본문" 추출해서 읽기
+            if (string.IsNullOrWhiteSpace(selectedText))
+            {
+                string jsMainTextScript = @"
+(() => {
+  function getMainTextFromDocument(doc) {
+    const isProbablyContent = (el) => {
+      const classes = el.className?.toLowerCase() || '';
+      const id = el.id?.toLowerCase() || '';
+      return !classes.includes('ad') && !id.includes('ad') &&
+             !classes.includes('footer') && !id.includes('footer') &&
+             !classes.includes('comment') && !id.includes('comment') &&
+             !classes.includes('aside') && !id.includes('aside');
+    };
+
+    const mainTags = ['main', 'article', 'section'];
+    for (const tag of mainTags) {
+      const el = doc.querySelector(tag);
+      if (el && el.innerText.trim().length > 200 && isProbablyContent(el)) {
+        return el.innerText.trim();
+      }
+    }
+
+    const divs = Array.from(doc.querySelectorAll('div'))
+      .filter(div => {
+        const len = (div.innerText || '').trim().length;
+        return len > 200 && isProbablyContent(div);
+      })
+      .map(div => ({
+        el: div,
+        length: div.innerText.trim().length
+      }))
+      .sort((a, b) => b.length - a.length);
+
+    if (divs.length > 0) {
+      return divs[0].el.innerText.trim();
+    }
+
+    return doc.body?.innerText?.trim() || '';
+  }
+
+  try {
+    const fromDoc = getMainTextFromDocument(document);
+    if (fromDoc.length > 200) return fromDoc;
+
+    const iframes = document.querySelectorAll('iframe');
+    for (const iframe of iframes) {
+      try {
+        const doc = iframe.contentDocument;
+        if (doc) {
+          const text = getMainTextFromDocument(doc);
+          if (text.length > 200) return text;
+        }
+      } catch (e) {}
+    }
+
+    return '';
+  } catch (e) {
+    return '';
+  }
+})()
+";
+
+
+                var fullTextResult = await winFormsBrowser.EvaluateScriptAsync(jsMainTextScript);
+                if (fullTextResult.Success && fullTextResult.Result is string fullText && !string.IsNullOrWhiteSpace(fullText))
+                {
+                    selectedText = fullText;
+                }
+            }
+
 
             if (!string.IsNullOrWhiteSpace(selectedText))
             {
@@ -296,36 +408,32 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
             else
             {
-                CustomMessageBox.Show("먼저 읽고 싶은 텍스트를 마우스로 선택해 주세요.\n(글자 위에 클릭 후 쭉 움직이기)", this);
+                CustomMessageBox.Show("읽을 텍스트가 없어요. \n읽고 싶은 텍스트를 마우스로 선택해 주세요.\n(글자 위에 클릭 후 쭉 움직이기)", this);
             }
         }
 
 
-        //private async void SpeakButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (isSpeaking)
-        //    {
-        //        ttsService.Stop();
-        //        isSpeaking = false;
-        //        SpeakButtonText.Text = "소리로 듣기";
-        //        SpeakButtonImage.Source = new BitmapImage(new Uri(IconPlay));
-        //    }
-        //    else
-        //    {
-        //        var result = await winFormsBrowser.EvaluateScriptAsync("window.getSelection().toString();");
-        //        if (result.Success && result.Result is string selectedText && !string.IsNullOrWhiteSpace(selectedText))
-        //        {
-        //            ttsService.Speak(selectedText);
-        //            isSpeaking = true;
-        //            SpeakButtonText.Text = "중단";
-        //            SpeakButtonImage.Source = new BitmapImage(new Uri(IconStop));
-        //        }
-        //        else
-        //        {
-        //            CustomMessageBox.Show("먼저 읽고 싶은 텍스트를 마우스로 선택해 주세요.\n(글자 위에 클릭 후 쭉 움직이기)", this);
-        //        }
-        //    }
-        //}
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
+
 
 
         private void TtsService_SpeakCompleted(object sender, EventArgs e)
@@ -994,7 +1102,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             if (AiUserQueryTextBox.Text == "13살 손녀가 좋아할 선물 추천해줘")
             {
                 AiUserQueryTextBox.Text = "";
-                AiUserQueryTextBox.Foreground = Brushes.Black;
+                AiUserQueryTextBox.Foreground = System.Windows.Media.Brushes.Black;
             }
         }
 
@@ -1003,7 +1111,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             if (string.IsNullOrWhiteSpace(AiUserQueryTextBox.Text))
             {
                 AiUserQueryTextBox.Text = "13살 손녀가 좋아할 선물 추천해줘";
-                AiUserQueryTextBox.Foreground = Brushes.Gray;
+                AiUserQueryTextBox.Foreground = System.Windows.Media.Brushes.Gray;
             }
         }
 
