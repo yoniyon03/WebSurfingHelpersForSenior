@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
+using WinForms = System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace WebSurfingHelpersForSenior
 {
@@ -60,6 +63,20 @@ namespace WebSurfingHelpersForSenior
             catch (Exception ex)
             {
                 MessageBox.Show("TTS 테스트 실패: " + ex.Message);
+            }
+        }
+
+        // 홈 화면 설정
+        private void SetHomeUrl_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SetHomePageWindow(); // 홈 설정 팝업
+            dialog.Owner = this;
+
+            if (dialog.ShowDialog() == true)
+            {
+                Properties.Settings.Default.HomeUrl = dialog.SelectedUrl;
+                Properties.Settings.Default.Save();
+                CustomMessageBox.Show("홈페이지가 설정되었습니다.", "확인", MessageBoxImage.Information);
             }
         }
     }

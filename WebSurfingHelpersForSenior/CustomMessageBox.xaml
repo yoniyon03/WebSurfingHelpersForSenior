@@ -7,15 +7,19 @@
         Width="500" Height="200" Background="White">
     <Grid Margin="20">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock x:Name="MessageText"
+            <TextBlock x:Name="TitleText"
                        TextWrapping="Wrap"
                        FontSize="18"
                        TextAlignment="Center"
                        FontWeight="Bold"
                        Foreground="Black"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Image x:Name="IconImage" Width="32" Height="32" Margin="0,0,10,0"/>
+                <TextBlock x:Name="MessageText" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+            </StackPanel>
             <Button Content="확인"
                     Width="100"
-                    Height="40"
+                    Height="30"
                     Margin="0,20,0,0"
                     Click="OkButton_Click"/>
         </StackPanel>
