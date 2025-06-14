@@ -58,7 +58,7 @@ namespace WebSurfingHelpersForSenior
         private double currentZoomLevel = -0.5;
         private TTSService ttsService = new TTSService();
 
-        // 소리로 듣기, 중단을 위한 bool
+        // 소리로 듣기, 중단을 위한 
         private bool isSpeaking = false;
 
         // 소리로 듣기, 중단을 위한 이미지
@@ -1226,9 +1226,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            var tutorial = new TutorialWindow();
-            tutorial.Owner = this;
-            tutorial.ShowDialog();
+            var stepsWindow = new TutorialStepsWindow(fromHelp: true);
+            stepsWindow.Owner = this;
+            stepsWindow.ShowDialog();
         }
 
     }

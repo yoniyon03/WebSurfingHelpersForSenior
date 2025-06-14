@@ -5,35 +5,142 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebSurfingHelpersForSenior"
         mc:Ignorable="d"
-        Title="TutorialStepsWindow"  Height="800" Width="1400">
-    <Grid>
-        <!-- 제목 -->
-        <TextBlock x:Name="StepTitle" Text="1) 홈 화면으로 바로가기" 
-                   FontSize="24" FontWeight="Bold" Margin="20" />
+        Title="TutorialStepsWindow" Height="800" Width="1400">
 
-        <StackPanel>
+    <Window.Resources>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 제목 -->
+            <RowDefinition Height="Auto"/>
             <!-- 설명 -->
-            <TextBlock x:Name="StepDescription" Text="왼쪽 위에 있는 🏠 홈 버튼을 누르면 언제든지 처음 화면으로 돌아갈 수 있어요.&#x0a;원래 보던 화면이 헷갈리면 이 버튼으로 다시 시작해보세요."
-               Margin="50,70,20,0" TextWrapping="Wrap" FontSize="20"/>
+            <RowDefinition Height="*"/>
+            <!-- 이미지 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 버튼 -->
+        </Grid.RowDefinitions>
 
-            <!-- 이미지 강조 예시 -->
-            <Image x:Name="StepImage" Source="/Assets/home.png" 
-           HorizontalAlignment="Center" Margin="0,20,0,0" Width="986" Height="562"/>
-        </StackPanel>
+        <!-- 제목 -->
+        <TextBlock x:Name="StepTitle"
+                   Grid.Row="0"
+                   Text="1) 홈 화면으로 바로가기"
+                   FontSize="24" FontWeight="Bold"
+                   Margin="10,0,10,10"/>
 
+        <!-- 설명 -->
+        <TextBlock x:Name="StepDescription"
+                   Grid.Row="1"
+                   Text="설명 텍스트"
+                   FontSize="18"
+                   TextWrapping="Wrap"
+                   Margin="30,0,30,20"/>
 
+        <!-- 이미지 -->
+        <Image x:Name="StepImage"
+               Grid.Row="2"
+               Stretch="Uniform"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               MaxHeight="500"
+               Margin="0,0,0,20"/>
 
-        <!-- 이전/다음 버튼 -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20">
-            <Button x:Name="PrevButton" Content="이전" Width="100" Margin="10" Click="PrevButton_Click" FontSize="16"/>
-            <Button x:Name="NextButton" Content="다음" Width="100" Margin="10" Click="NextButton_Click" FontSize="16"/>
-        </StackPanel>
+        <!-- 버튼 영역 -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- 체크박스와 시작 버튼 -->
-        <CheckBox x:Name="DontShowAgainCheck" Content="다음부터 보지 않기" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20,0,0,10"/>
-        <Button Content="바로 시작하기" Width="120"
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,20"
-                Click="StartButton_Click" FontSize="14"/>
+            <!-- 체크박스 -->
+            <CheckBox x:Name="DontShowAgainCheck"
+                      Grid.Column="0"
+                      Content="다음부터 보지 않기"
+                      VerticalAlignment="Center"
+                      Visibility="Collapsed"
+                      Margin="10"/>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
+                <!-- 이전 버튼 -->
+                <Button x:Name="PrevButton"
+         
+         Style="{StaticResource RoundedButtonStyle}"
+         Content="이전" Height="30" Width="110" Margin="10"
+         Click="PrevButton_Click"/>
+
+                <!-- 다음 버튼 -->
+                <Button x:Name="NextButton"
+        
+         Style="{StaticResource RoundedButtonStyle}"
+         Content="다음" Height="30" Width="110" Margin="10"
+         Click="NextButton_Click"/>
+            </StackPanel>
+           
+
+            <!-- 바로 시작하기 -->
+            <Button x:Name="StartButton"
+                    Grid.Column="2"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Content="바로 시작하기" Width="140" HorizontalAlignment="Right" Margin="10"
+                    Click="StartButton_Click"/>
+
+            <!-- 튜토리얼 완료 -->
+            <Button x:Name="FinishButton"
+                    Grid.Column="1"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Content="프로그램 시작하기" Height="40"  Width="180" FontSize="18" Margin="10"
+                    Visibility="Collapsed"
+                    Click="FinishButton_Click"/>
+
+            <Button x:Name="CloseButton"
+                    Grid.Column="2"
+        Content="닫기"
+        Width="160"
+        Height="40"
+        FontSize="14"
+        Style="{StaticResource RoundedButtonStyle}"
+        Click="CloseButton_Click"
+        Visibility="Collapsed"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Bottom"
+        Margin="0,0,20,20"/>
+
+        </Grid>
     </Grid>
 </Window>
-

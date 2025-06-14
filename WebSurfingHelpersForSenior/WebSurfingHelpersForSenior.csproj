@@ -263,9 +263,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\home.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Assets\favorites.png" />
   </ItemGroup>
   <ItemGroup>
@@ -276,6 +273,38 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\setting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\favorites-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\setting-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\soundSetting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\AiSearch.png" />
+    <Resource Include="Assets\Keyword.png" />
+    <Resource Include="Assets\suggestion.png" />
+    <Resource Include="Assets\summation.png" />
+    <Resource Include="Assets\UsingAi.png" />
+    <Resource Include="Assets\whatIsThisPage.png" />
+    <Resource Include="Assets\word.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Font-1.png" />
+    <Resource Include="Assets\Font.png" />
+    <Resource Include="Assets\FontSize.png" />
+    <Resource Include="Assets\help.png" />
+    <Resource Include="Assets\highContrast-1.png" />
+    <Resource Include="Assets\highContrast.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\ZoomInOut.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

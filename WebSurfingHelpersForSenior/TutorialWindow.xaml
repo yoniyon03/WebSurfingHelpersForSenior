@@ -5,18 +5,68 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebSurfingHelpersForSenior"
         mc:Ignorable="d"
-        Title="TutorialWindow" Height="450" Width="800" WindowStartupLocation="CenterOwner">
-    <Grid>
-        <TextBlock Text="웹서핑 도우미 사용법 튜토리얼"
-                   FontSize="18" FontWeight="Bold"
-                   VerticalAlignment="Top" Margin="20"/>
-        <TextBlock Text="예: 글자 확대, 소리로 듣기, AI 요약 등 기능 설명을 여기에 작성이를 하묜 됨 이거는 나중에 수정"
-                   Margin="20 60 20 0" TextWrapping="Wrap"/>
-        <Button Content="시작하기" Width="100" Height="40"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0 0 0 30"
-                Click="StartButton_Click"/>
-        <CheckBox x:Name="DontShowAgainCheck" Content="다음부터 보지 않기" VerticalAlignment="Bottom" Margin="20"/>
+        Title="웹서핑 도우미 사용법 안내"
+        Height="500" Width="800" WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
+
+
+    <Window.Resources>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="10"
+                        SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+
+
+    <Grid Margin="20">
+        <!-- 제목 -->
+        <TextBlock Text="🧭 웹서핑 도우미 사용법 안내"
+                   FontSize="30" FontWeight="Bold"
+                   Margin="0,60,0,0" TextAlignment="Center"
+                   HorizontalAlignment="Center" />
+
+        <!-- 설명 -->
+        <TextBlock Text="처음 사용하시는 분들을 위해 준비했어요.&#x0a;모든 기능을 친절히 안내해드립니다 😊"
+                   FontSize="18" TextWrapping="Wrap"
+                   Margin="40,160,40,20" TextAlignment="Center" HorizontalAlignment="Center"/>
+
+        <!-- 시작 버튼 -->
+        <Button Style="{StaticResource RoundedButtonStyle}" Content="시작하기" Width="180" Height="45"
+                FontSize="16" FontWeight="Bold"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,60"
+                Click="StartButton_Click" />
+
+      
     </Grid>
-    
-    
 </Window>
