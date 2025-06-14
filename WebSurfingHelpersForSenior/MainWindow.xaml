@@ -42,6 +42,7 @@
         </Style>
     </Window.Resources>
 
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -51,6 +52,12 @@
             <RowDefinition Height="60"/>
             <!-- 하단 도구 바 -->
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <!-- 웹 브라우저 -->
+            <ColumnDefinition Width="300"/>
+            <!-- 오른쪽 AI 패널 -->
+        </Grid.ColumnDefinitions>
 
         <!-- 상단 버튼 바 -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
@@ -95,15 +102,7 @@
 
             <!-- 우측 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
-                <!-- AI 요약 -->
-                <Button Style="{StaticResource RoundedButtonStyle}"
-                    Width="100" Height="40" Margin="4" ToolTip="요약보기">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/33/33013.png" />
-                        <TextBlock Text="요약보기" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
-                
+
                 <!-- 음성 지원 -->
                 <Button Style="{StaticResource RoundedButtonStyle}"
                     x:Name="SpeakButton" Width="120" Height="40" Margin="4" ToolTip="소리로 듣기" Click="SpeakButton_Click">
@@ -124,11 +123,219 @@
             </StackPanel>
         </StackPanel>
 
-        <wfi:WindowsFormsHost Grid.Row="1" x:Name="browserHost" Margin="0,8" />
-        <!--<cefSharp:ChromiumWebBrowser x:Name="Browser"
-                             Grid.Row="1"
-                             Address="https://www.naver.com"
-                             Margin="0,8"/>-->
+        
+        <wfi:WindowsFormsHost Grid.Row="1" Grid.Column="0" x:Name="browserHost" Margin="0,8" />
+  
+        
+        <!-- AI 사이드바 -->
+        <Border Grid.Row="1" Grid.Column="1" x:Name="aiSidebar" Background="#FFFDEFD0" BorderBrush="Gray" BorderThickness="1" Margin="10, 0, 10, 0">
+            <Grid x:Name="AiSidebarGrid">
+                <!-- 메인 메뉴 -->
+                <StackPanel x:Name="AiMainMenuPanel" Margin="10">
+                    <TextBlock Text="🤖 AI 활용하기" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <StackPanel Margin="0, 30, 0, 80">
+                        <Button Content="이 페이지 뭐 하는 곳이야?" Click="WhatIsThisPageButton_Click" Height="40" Margin="20" FontSize="14"/>
+                        <Button Content="본문 내용 요약해서 보기" Click="SummarizePageButton_Click" Height="40" Margin="20" FontSize="14"/>
+                        <Button Content="단어 뜻 알려줘" Click="ExplainWordButton_Click" Height="40" Margin="20" FontSize="14"/>
+                        <Button Content="AI가 대신 찾아줘요" Click="ShowAiSearchPanel_Click" Height="40" Margin="20" FontSize="14"/>
+                        <Button Content="관련 키워드 추천받기" Click="RecommendKeywordsButton_Click" Height="40" Margin="20" FontSize="14"/>
+                        
+                        <!-- AI 제안 팝업 -->
+                        <StackPanel x:Name="AiSmartSuggestionPanel" Visibility="Collapsed" Margin="10">
+                            <TextBlock x:Name="AiSmartSuggestionText" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Button Content="자세히 알려줘요" Click="ExplainSuggestion_Click" Margin="0,0,10,0"/>
+                                <Button Content="닫기" Click="CloseSuggestion_Click"/>
+                            </StackPanel>
+                            <TextBox x:Name="AiSuggestionExplanationTextBox" TextWrapping="Wrap" FontSize="14" Background="#FFFDEFD0" IsReadOnly="True" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+
+                <!--이 페이지 뭐하는 곳이야? UI-->
+                <Grid x:Name="WhatIsThisPagePanel" Visibility="Collapsed" Margin="10" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto"/>
+                        <!-- 뒤로가기 버튼 -->
+                        <RowDefinition Height="*" />
+                        <!-- 스크롤 영역 -->
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Content="← 뒤로가기" Click="BackToAiMenu_Click1" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                    <ProgressBar x:Name="WhatIsThisLoadingBar"
+                 Grid.Row="1"
+                 Height="10"
+                 Margin="0,0,0,10"
+                 IsIndeterminate="True"
+                 Visibility="Collapsed" />
+
+
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBox x:Name="WhatIsThisPageResultTextBox" IsReadOnly="True" Text="" TextWrapping="Wrap" FontSize="14" Background="#FFFDEFD0"/>
+                    </ScrollViewer>
+                </Grid>
+                
+                
+                <!-- 본문 내용 요약해서 보기 UI -->
+                <Grid x:Name="SummarizePagePanel" Visibility="Collapsed" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Content="← 뒤로가기" Click="BackToAiMenu_Click5" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                    <ProgressBar x:Name="SummarizeLoadingBar"
+                 Grid.Row="1"
+                 Height="10"
+                 Margin="0,0,0,10"
+                 IsIndeterminate="True"
+                 Visibility="Collapsed" />
+
+
+
+                    <TextBox x:Name="SummarizedTextBox" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" FontSize="14" Background="#FFFDEFD0"/>
+                </Grid>
+
+
+
+                <!-- 단어 뜻 알려줘 UI -->
+                <Grid x:Name="ExplainWordPanel" Visibility="Collapsed" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Content="← 뒤로가기" Click="BackToAiMenu_Click6" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                    <!-- ✅ 로딩바 위치 -->
+                    <ProgressBar x:Name="ExplainWordLoadingBar"
+                 Grid.Row="1"
+                 Height="10"
+                 Margin="0,0,0,10"
+                 IsIndeterminate="True"
+                 Visibility="Collapsed" />
+
+
+                    <TextBox x:Name="WordExplanationTextBox" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" FontSize="14" Background="#FFFDEFD0"/>
+                </Grid>
+
+
+
+                <!-- AI 검색 UI -->
+                <StackPanel x:Name="AiSearchPanel" Visibility="Collapsed" Margin="10">
+                    <Button Content="← 뒤로가기" Click="BackToAiMenu_Click2" HorizontalAlignment="Left" Margin="0,0,0,10" />
+                    <TextBlock Text="궁금한 걸 검색해보세요" FontWeight="Bold" FontSize="14"/>
+                    <TextBox x:Name="AiUserQueryTextBox" Height="30" FontSize="14" Margin="0,5" Foreground="Gray" Text="13살 손녀가 좋아할 선물 추천해줘" GotFocus="AiUserQueryTextBox_GotFocus" LostFocus="AiUserQueryTextBox_LostFocus"/>
+                    <Button Content="AI가 답해줘요" Click="AiHelpSearchButton_Click" Height="35" Margin="0,10,0,0"/>
+                </StackPanel>
+
+                <Grid x:Name="AiSearchResultPanel" Visibility="Collapsed" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Content="← 뒤로가기" Click="BackToAiMenu_Click2" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                    <ProgressBar x:Name="AiSearchLoadingBar"
+                 Grid.Row="1"
+                 Height="10"
+                 Margin="0,0,0,10"
+                 IsIndeterminate="True"
+                 Visibility="Collapsed" />
+
+                    <TextBox x:Name="AiSearchResultTextBox"
+             Grid.Row="2"
+             TextWrapping="Wrap"
+             FontSize="14"
+             Background="#FFFDEFD0"
+             IsReadOnly="True"
+             AcceptsReturn="True"/>
+                </Grid>
+
+
+
+
+                <!-- AI 관련 키워드 추천 받기-->
+                <Grid x:Name="AiKeywordPagePanel" Visibility="Collapsed" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Content="← 뒤로가기" Grid.Row="0" Click="BackToAiMenu_Click3" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+
+                    <ProgressBar x:Name="AiKeywordLoadingBar"
+                 Grid.Row="1"
+                 Height="10"
+                 Margin="0,0,0,10"
+                 IsIndeterminate="True"
+                 Visibility="Collapsed" />
+
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="🧠 관련 키워드를 추천해드릴게요!" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <WrapPanel x:Name="AiKeywordPanel" Margin="0,0,0,10"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 전체 설명 패널 -->
+                <Grid x:Name="AiExplanationPanel" Visibility="Collapsed" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 뒤로가기 버튼 -->
+                    <Button Grid.Row="0" Content="← 뒤로가기" Click="BackToAiMenu_Click4" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                    <ProgressBar x:Name="AiExplanationLoadingBar"
+                 Grid.Row="1"
+                 Height="10"
+                 Margin="0,0,0,10"
+                 IsIndeterminate="True"
+                 Visibility="Collapsed" />
+
+                    <!-- 제목 -->
+                    <TextBlock x:Name="AiExplanationTitle" Grid.Row="2" FontWeight="Bold" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                    <!-- 주요 설명 -->
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                        <TextBox x:Name="AiExplanationContent"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 FontSize="14"
+                                 Background="#FFFDEFD0"
+                                 Padding="10" />
+                    </ScrollViewer>
+
+                    <Button Grid.Row="4"
+            Content="잘 모르겠어요"
+            Click="MoreExplanation_Click"
+            Height="40"
+                            Width="150"
+            Margin="0,10,0,0"
+            FontSize="14"
+            HorizontalAlignment="Center"/>
+
+                </Grid>
+            </Grid>
+        </Border>
+
+
+
 
         <!-- 하단 도구 바 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10 0 10 0">
@@ -136,6 +343,7 @@
             <!-- 고대비 테마 -->
             <Button Style="{StaticResource RoundedButtonStyle}"
                 Width="200" Height="40" Margin="4" ToolTip="고대비" Click="HighContrast_Click">
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/3659/3659752.png" />
                     <TextBlock Text=" 고대비 화면으로 보기" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
