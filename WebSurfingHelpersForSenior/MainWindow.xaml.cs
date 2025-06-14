@@ -197,23 +197,23 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 string fontSize = $"{fontName.SizeInPoints}px";
 
                 string js = $@"
-            (function() {{
-                const existing = document.getElementById('custom-font-style');
-                if (existing) existing.remove();
+(function() {{
+    const existing = document.getElementById('custom-font-style');
+    if (existing) existing.remove();
 
-                const style = document.createElement('style');
-                style.id = 'custom-font-style';
-                style.innerHTML = 
-                    * {{
-                        font-family: '{fontName.Name}' !important;
-                        font-weight: {fontWeight} !important;
-                        font-style: {fontStyle} !important;
-                        font-size: {fontSize} !important;
-                    }}
-                ;
-                document.head.appendChild(style);
-            }})();
-        ";
+    const style = document.createElement('style');
+    style.id = 'custom-font-style';
+    style.innerHTML = `
+        * {{
+            font-family: '{fontName.Name}' !important;
+            font-weight: {fontWeight} !important;
+            font-style: {fontStyle} !important;
+            font-size: {fontSize} !important;
+        }}
+    `;
+    document.head.appendChild(style);
+}})();
+";
                 winFormsBrowser.ExecuteScriptAsync(js);
             }
         }
@@ -630,7 +630,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
- // AI 부분
+        // AI 부분
         private async void WhatIsThisPageButton_Click(object sender, RoutedEventArgs e)
         {
             var browser = winFormsBrowser;
@@ -1132,7 +1132,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
                 AiExplanationTitle.Text = $"📝 {topic}";
                 AiExplanationContent.Text = explanation;
-              
+
             }
             catch (Exception ex)
             {
@@ -1147,7 +1147,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
 
 
-     
+
 
 
 
