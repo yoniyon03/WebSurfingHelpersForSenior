@@ -1,6 +1,5 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
-using SeniorWebHelper;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Drawing;
 using WinForms = System.Windows.Forms;
-
 
 namespace WebSurfingHelpersForSenior
 {
@@ -49,14 +47,13 @@ namespace WebSurfingHelpersForSenior
         private ChromiumWebBrowser winFormsBrowser;
         private double currentZoomLevel = -0.5;
         private TTSService ttsService = new TTSService();
-        
+
         // 소리로 듣기, 중단을 위한 bool
         private bool isSpeaking = false;
-        
+
         // 소리로 듣기, 중단을 위한 이미지
         private const string IconPlay = "https://cdn-icons-png.flaticon.com/512/1538/1538548.png";
         private const string IconStop = "https://cdn-icons-png.flaticon.com/512/5890/5890688.png";
-
 
         // 고대비
         private bool isHighContrast = false;
@@ -159,14 +156,14 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
                 const style = document.createElement('style');
                 style.id = 'custom-font-style';
-                style.innerHTML = `
+                style.innerHTML = 
                     * {{
                         font-family: '{fontName.Name}' !important;
                         font-weight: {fontWeight} !important;
                         font-style: {fontStyle} !important;
                         font-size: {fontSize} !important;
                     }}
-                `;
+                ;
                 document.head.appendChild(style);
             }})();
         ";
@@ -237,8 +234,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-
-
         private void TtsService_SpeakCompleted(object sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -248,7 +243,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 SpeakButtonImage.Source = new BitmapImage(new Uri(IconPlay));
             });
         }
-        
 
 
         // 설정 버튼 클릭 이벤트
@@ -277,7 +271,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             {
                 isMediaFilterOff = false;
                 MediaFilterButtonText.Text = "사진 고대비 적용";
-                MediaFilterToggleButton.Visibility = Visibility.Visible;
+                MediaFilterToggleButton.Visibility = Visibility.Visible; // 버튼 보이기
             }
             else
             {
@@ -405,6 +399,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             document.head.appendChild(style);
         }})();
     ";
+
             winFormsBrowser.ExecuteScriptAsync(script);
         }
 
