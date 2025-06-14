@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Linq;ㅋ
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+
 
 public class GeminiService
 {
@@ -218,6 +219,7 @@ public class GeminiService
                     .GetProperty("parts")[0]
                     .GetProperty("text")
                     .GetString();
+
             }
         }
         catch (Exception ex)

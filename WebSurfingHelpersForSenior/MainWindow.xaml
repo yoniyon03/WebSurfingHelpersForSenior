@@ -3,7 +3,46 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-        Title="WebSurfingHelpersForSenior" Height="800" Width="1200" Background="#FFF9F3E8" ResizeMode="CanResize">
+        Title="MyApp" Height="800" Width="1200" Background="#FFF9F3E8" ResizeMode="CanResize">
+
+    <Window.Resources>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Background" Value="#004578"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="10"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#005A9E"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#002C4A"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#CCCCCC"/>
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -25,14 +64,16 @@
             <!-- 좌측 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
                 <!-- 홈 바로가기 -->
-                <Button Width="60" Height="40" Margin="4" ToolTip="홈">
+                <Button Style="{StaticResource RoundedButtonStyle}" Width="60" Height="40" Margin="4" ToolTip="홈" Click="HomeButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/7606/7606153.png" />
                         <TextBlock Text="홈" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
+                
                 <!-- 즐겨찾기 -->
-                <Button Width="90" Height="40" Margin="4" ToolTip="즐겨찾기">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="90" Height="40" Margin="4" ToolTip="즐겨찾기" Click="FavoritesButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/5187/5187586.png" />
                         <TextBlock Text="즐겨찾기" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
@@ -43,13 +84,15 @@
             <!-- 중앙 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="40,0">
                 <!-- 뒤로 가기, 앞으로 가기 -->
-                <Button Click="BackButton_Click" Width="120" Height="40" Margin="4" ToolTip="이전">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Click="BackButton_Click" Width="120" Height="40" Margin="4" ToolTip="이전">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="◀" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <TextBlock Text=" 뒤로 가기" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Click="ForwardButton_Click" Width="120" Height="40" Margin="4" ToolTip="다음">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Click="ForwardButton_Click" Width="120" Height="40" Margin="4" ToolTip="다음">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="앞으로 가기 " FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <TextBlock Text="▶" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -59,16 +102,19 @@
 
             <!-- 우측 -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+
                 <!-- 음성 지원 -->
-                <Button x:Name="SpeakButton" Width="120" Height="40" Margin="4" ToolTip="소리로 듣기" Click="SpeakButton_Click">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    x:Name="SpeakButton" Width="120" Height="40" Margin="4" ToolTip="소리로 듣기" Click="SpeakButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image x:Name="SpeakButtonImage" Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/1538/1538548.png" />
                         <TextBlock x:Name="SpeakButtonText" Text="소리로 듣기" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
-                
+
                 <!-- 설정 -->
-                <Button Width="80" Height="40" Margin="160 0 0 0" ToolTip="설정" Click="SettingsButton_Click">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="80" Height="40" Margin="50 0 0 0" ToolTip="설정" Click="SettingsButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/709/709707.png" />
                         <TextBlock Text="설정" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
@@ -293,33 +339,68 @@
 
         <!-- 하단 도구 바 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10 0 10 0">
+
             <!-- 고대비 테마 -->
-            <Button Click="HighContrast_Click" Width="200" Height="40" Margin="4" ToolTip="고대비">
+            <Button Style="{StaticResource RoundedButtonStyle}"
+                Width="200" Height="40" Margin="4" ToolTip="고대비" Click="HighContrast_Click">
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/3659/3659752.png" />
                     <TextBlock Text=" 고대비 화면으로 보기" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
+            <!-- 사진 필터 토글 -->
+            <Button x:Name="MediaFilterToggleButton"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Width="160" Height="40" Margin="4"
+                    ToolTip="사진 및 영상은 원본 보기"
+                    Click="MediaFilterToggle_Click"
+                    Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/25/25301.png"/>
+                    <TextBlock x:Name="MediaFilterButtonText" Text="사진 및 원본 보기" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+
             <!-- 글자 크기 조절 -->
             <StackPanel Orientation="Horizontal" Margin="40 0" VerticalAlignment="Center">
+                <!-- 폰트 변경 -->
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="100" Height="40" Margin="4" ToolTip="폰트 변경" Click="ChangeFont_Click">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/1828/1828919.png"/>
+                        <TextBlock Text="폰트 변경" Margin="4, 0, 0, 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
+                    </StackPanel>
+                </Button>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Width="25" Height="25" Source="https://user-images.githubusercontent.com/537522/34322316-14a5c1a6-e839-11e7-8bdd-ecc63e88cdd5.png" />
-                    <TextBlock Text=" 글자 크기 " FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Width="100" Height="40" Margin="4">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="25" Height="25" Source="https://user-images.githubusercontent.com/537522/34322316-14a5c1a6-e839-11e7-8bdd-ecc63e88cdd5.png" />
+                            <TextBlock Text=" 글자 크기 " FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
-                <Button Width="24" Height="24" Margin="2" Content="▲" FontSize="14" ToolTip="글자 크기 증가"/>
-                <Button Width="24" Height="24" Margin="2" Content="▼" FontSize="14" ToolTip="글자 크기 감소"/>
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="24" Height="24" Margin="2" Content="▲" FontSize="14" ToolTip="글자 크기 증가" Click="IncreaseFontSize_Click"/>
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="24" Height="24" Margin="2" Content="▼" FontSize="14" ToolTip="글자 크기 감소" Click="DecreaseFontSize_Click"/>
             </StackPanel>
 
             <!-- 확대, 축소 -->
             <StackPanel Orientation="Horizontal" Margin="10 0" VerticalAlignment="Center">
-                <Button Width="90" Height="40" Margin="5 4" ToolTip="확대" Click="ZoomIn_Click">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="90" Height="40" Margin="5 4" ToolTip="확대" Click="ZoomIn_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="25" Height="25" Source="https://cdn-icons-png.flaticon.com/512/159/159084.png" />
                         <TextBlock Text=" 확대" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Width="90" Height="40" Margin="4" ToolTip="축소" Click="ZoomOut_Click">
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                    Width="90" Height="40" Margin="4" ToolTip="축소" Click="ZoomOut_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="25" Height="25" Source="https://cdn-icons-png.flaticon.com/512/159/159096.png" />
                         <TextBlock Text=" 축소" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -328,7 +409,8 @@
             </StackPanel>
 
             <!-- 튜토리얼-->
-            <Button Width="100" Height="40" Margin="100 0 0 0" ToolTip="도움말">
+            <Button Style="{StaticResource RoundedButtonStyle}"
+                Width="100" Height="40" Margin="100 0 0 0" ToolTip="도움말">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Width="25" Height="25" Source="https://images.icon-icons.com/3377/PNG/512/help_icon_212398.png" />
                     <TextBlock Text=" 도움말" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>

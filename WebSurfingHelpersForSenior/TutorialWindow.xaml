@@ -1,0 +1,20 @@
+﻿<Window x:Class="WebSurfingHelpersForSenior.TutorialWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebSurfingHelpersForSenior"
+        mc:Ignorable="d"
+        Title="TutorialWindow" Height="450" Width="800" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <TextBlock Text="웹서핑 도우미 사용법 튜토리얼"
+                   FontSize="18" FontWeight="Bold"
+                   VerticalAlignment="Top" Margin="20"/>
+        <TextBlock Text="예: 글자 확대, 소리로 듣기, AI 요약 등 기능 설명을 여기에 작성이를 하묜 됨 이거는 나중에 수정"
+                   Margin="20 60 20 0" TextWrapping="Wrap"/>
+        <Button Content="시작하기" Width="100" Height="40"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0 0 0 30"
+                Click="StartButton_Click"/>
+        <CheckBox x:Name="DontShowAgainCheck" Content="다음부터 보지 않기" VerticalAlignment="Bottom" Margin="20"/>
+    </Grid>
+</Window>
