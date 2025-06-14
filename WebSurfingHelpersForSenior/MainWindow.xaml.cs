@@ -1186,5 +1186,16 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
             return sb.ToString();
         }
+
+
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var tutorial = new TutorialWindow();
+            tutorial.Owner = this;
+            tutorial.ShowDialog();
+        }
+
     }
+
 }

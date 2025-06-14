@@ -4,18 +4,11 @@
         Title="설정" Height="250" Width="400" WindowStartupLocation="CenterOwner">
     <Grid Margin="20">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
-            <!-- 속도 조절 -->
-            <TextBlock Text="속도 조절 (-10 ~ 10)" FontSize="16" Margin="10,0,0,8"/>
-            <Slider x:Name="RateSlider"
-                    Minimum="-10" Maximum="10" TickFrequency="1" Value="0"
-                    IsSnapToTickEnabled="True" ValueChanged="Slider_ValueChanged"/>
-            <!-- 볼륨 조절 -->
-            <TextBlock Text="볼륨 조절 (0 ~ 100)" FontSize="16" Margin="10,20,0,8"/>
-            <Slider x:Name="VolumeSlider"
-                    Minimum="0" Maximum="100" TickFrequency="10" Value="100"
-                    IsSnapToTickEnabled="True" ValueChanged="Slider_ValueChanged"/>
-            <!-- 홈 주소 설정 버튼 -->
-            <Button Content="홈 주소 설정" Width="120" Height="30" Margin="0, 20, 0, 0" Click="SetHomeUrl_Click"/>
+            <!-- 상단 설정 메뉴 버튼 -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                <Button Content="음성 설정" Width="120" Height="30" Margin="10" Click="ShowVoiceSettings_Click"/>
+                <Button Content="홈 주소 설정" Width="120" Height="30" Margin="10" Click="SetHomeUrl_Click"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

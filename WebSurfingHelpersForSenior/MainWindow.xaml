@@ -3,15 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-        Title="MyApp" Height="800" Width="1200" Background="#FFF9F3E8" ResizeMode="CanResize">
+        Title="MyApp" Height="800" Width="1400" Background="#FFF9F3E8" ResizeMode="CanResize">
 
     <Window.Resources>
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="Background" Value="#004578"/>
-            <Setter Property="Foreground" Value="White"/>
+    
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -26,14 +26,14 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#005A9E"/>
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#002C4A"/>
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#CCCCCC"/>
-                                <Setter Property="Foreground" Value="#888888"/>
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -73,7 +73,7 @@
                 
                 <!-- 즐겨찾기 -->
                 <Button Style="{StaticResource RoundedButtonStyle}"
-                    Width="90" Height="40" Margin="4" ToolTip="즐겨찾기" Click="FavoritesButton_Click">
+                    Width="90" Height="40" Margin="20, 0, 40, 0" ToolTip="즐겨찾기" Click="FavoritesButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/5187/5187586.png" />
                         <TextBlock Text="즐겨찾기" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
@@ -105,7 +105,7 @@
 
                 <!-- 음성 지원 -->
                 <Button Style="{StaticResource RoundedButtonStyle}"
-                    x:Name="SpeakButton" Width="120" Height="40" Margin="4" ToolTip="소리로 듣기" Click="SpeakButton_Click">
+                    x:Name="SpeakButton" Width="120" Height="40" Margin="80, 0, 10, 0" ToolTip="소리로 듣기" Click="SpeakButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image x:Name="SpeakButtonImage" Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/1538/1538548.png" />
                         <TextBlock x:Name="SpeakButtonText" Text="소리로 듣기" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
@@ -114,7 +114,7 @@
 
                 <!-- 설정 -->
                 <Button Style="{StaticResource RoundedButtonStyle}"
-                    Width="80" Height="40" Margin="50 0 0 0" ToolTip="설정" Click="SettingsButton_Click">
+                    Width="80" Height="40" Margin="120 0 0 0" ToolTip="설정" Click="SettingsButton_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Width="20" Height="20" Source="https://cdn-icons-png.flaticon.com/512/709/709707.png" />
                         <TextBlock Text="설정" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
@@ -391,7 +391,7 @@
             </StackPanel>
 
             <!-- 확대, 축소 -->
-            <StackPanel Orientation="Horizontal" Margin="10 0" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="20 0" VerticalAlignment="Center">
                 <Button Style="{StaticResource RoundedButtonStyle}"
                     Width="90" Height="40" Margin="5 4" ToolTip="확대" Click="ZoomIn_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -410,7 +410,7 @@
 
             <!-- 튜토리얼-->
             <Button Style="{StaticResource RoundedButtonStyle}"
-                Width="100" Height="40" Margin="100 0 0 0" ToolTip="도움말">
+                Width="100" Height="40" Margin="70 0 0 0" ToolTip="도움말" Click="HelpButton_Click">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Width="25" Height="25" Source="https://images.icon-icons.com/3377/PNG/512/help_icon_212398.png" />
                     <TextBlock Text=" 도움말" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
