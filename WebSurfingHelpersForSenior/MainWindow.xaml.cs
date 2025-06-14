@@ -197,23 +197,23 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 string fontSize = $"{fontName.SizeInPoints}px";
 
                 string js = $@"
-            (function() {{
-                const existing = document.getElementById('custom-font-style');
-                if (existing) existing.remove();
+(function() {{
+    const existing = document.getElementById('custom-font-style');
+    if (existing) existing.remove();
 
-                const style = document.createElement('style');
-                style.id = 'custom-font-style';
-                style.innerHTML = 
-                    * {{
-                        font-family: '{fontName.Name}' !important;
-                        font-weight: {fontWeight} !important;
-                        font-style: {fontStyle} !important;
-                        font-size: {fontSize} !important;
-                    }}
-                ;
-                document.head.appendChild(style);
-            }})();
-        ";
+    const style = document.createElement('style');
+    style.id = 'custom-font-style';
+    style.innerHTML = `
+        * {{
+            font-family: '{fontName.Name}' !important;
+            font-weight: {fontWeight} !important;
+            font-style: {fontStyle} !important;
+            font-size: {fontSize} !important;
+        }}
+    `;
+    document.head.appendChild(style);
+}})();
+";
                 winFormsBrowser.ExecuteScriptAsync(js);
             }
         }
@@ -1186,5 +1186,16 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
             return sb.ToString();
         }
+
+
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var tutorial = new TutorialWindow();
+            tutorial.Owner = this;
+            tutorial.ShowDialog();
+        }
+
     }
+
 }
