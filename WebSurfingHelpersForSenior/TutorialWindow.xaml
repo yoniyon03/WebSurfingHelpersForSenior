@@ -17,4 +17,6 @@
                 Click="StartButton_Click"/>
         <CheckBox x:Name="DontShowAgainCheck" Content="다음부터 보지 않기" VerticalAlignment="Bottom" Margin="20"/>
     </Grid>
+    
+    
 </Window>

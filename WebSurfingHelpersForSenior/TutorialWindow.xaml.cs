@@ -28,7 +28,14 @@ namespace WebSurfingHelpersForSenior
         {
             Properties.Settings.Default.SkipTutorial = DontShowAgainCheck.IsChecked == true;
             Properties.Settings.Default.Save();
+
+            // 슬라이드 창 열기
+            var stepsWindow = new TutorialStepsWindow();
+            stepsWindow.Owner = this;
+            stepsWindow.ShowDialog();
+
             this.Close();
         }
+
     }
 }

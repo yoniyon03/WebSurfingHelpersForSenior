@@ -101,7 +101,7 @@ public class GeminiService
     {
         var endpoint = $"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={apiKey}";
 
-        var prompt = $"다음은 웹페이지의 텍스트 내용이야:\n\"\"\"\n{pageText}\n\"\"\"\n\n이 내용을 시니어가 쉽게 이해할 수 있도록 3줄 이내로 요약해줘. 긴 문단 말고, 1~2문장마다 한 줄씩 끊어서 보기 쉽게, 가독성 좋게 답변해줘.";
+        var prompt = $"다음은 웹페이지의 텍스트 내용이야:\n\"\"\"\n{pageText}\n\"\"\"\n\n이 내용을 시니어가 쉽게 이해할 수 있도록 3줄 이내로 요약해줘. 긴 문단 말고, 1~2문장마다 한 줄씩 끊어서 보기 쉽게, 가독성 좋게 답변해줘. 각 줄은 **반드시 줄 바꿈**으로 구분해주세요.";
 
         var requestBody = new
         {
@@ -232,13 +232,12 @@ public class GeminiService
     {
         var endpoint = $"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={apiKey}";
 
-        var prompt =
-    $@"아래는 시니어 사용자가 검색창에 입력한 문장입니다:
+        var prompt = $@"
+{query}
 
-""{query}""
-
-이 문장의 의도를 파악해, 질문자가 시니어임을 알고 사용자에게 유익할 내용으로 이해하기 쉽게 답변을 정리해서 알려줘.
-가능하다면 추천이나 구체적인 예시도 함께 주면 좋아. 긴 문단 말고, 1~2문장마다 한 줄씩 끊어서 보기 쉽게, 가독성 좋게 답변해줘.";
+위 문장의 의도를 파악해서, 시니어가 이해하기 쉽고 성의있게 답변을 정리해줘.
+가능하다면 추천이나 구체적인 예시도 함께 주면 좋아.
+긴 문단 말고, 1~2문장마다 한 줄씩 끊어서 보기 좋게 답변해줘.";
 
         var requestBody = new
         {
@@ -453,7 +452,7 @@ public class GeminiService
         string prompt = "다음은 사용자가 보고 있는 웹페이지의 본문입니다:\n\"\"\"\n"
      + pageText + "\n\"\"\"\n\n"
      + "이 페이지에서 시니어가 궁금해할 수 있는 구체적인 주제를 한 문장으로 질문형으로 제안해줘.\n"
-     + "예: '주민등록등본 발급 방법이 궁금하신가요?'\n"
+     + "예: '주민등록등본 발급 방법이 궁금하신가요?', '오늘 날씨를 알려드릴까요?'\n"
      + "너가 대답해주기 어려운 주제는 제외하고 너가 잘 알려줄 수 있는 제안을 해줘.";
 
 
@@ -497,8 +496,8 @@ public class GeminiService
     {
         var endpoint = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
-        string prompt = "'" + topic + "'에 대해 시니어가 따라하기 쉽게 단계별로 설명해주거나 단계별로 따라하는 주제가 아니라면 시니어가 이해하기 쉽게 설명해줘.\n"
-            + "만약 단계별로 설명하게 된다면 각 단계는 한 줄씩, 간단하고 구체적인 지시문으로 구성해줘. 긴 문단 말고, 1~2문장마다 한 줄씩 끊어서 보기 쉽게, 가독성 좋게 답변해줘.";
+        string prompt = "'" + topic + "'에 대해 시니어가 따라하기 쉽게 단계별로 설명해주거나 단계별로 따라하는 주제가 아니라면 시니어가 이해하기 쉽게 설명해줘. PC기준으로 설명해줘야 해.\n"
+            + "만약 단계별로 설명하게 된다면 각 단계는 한 줄씩, 간단하고 구체적인 지시문으로 구성해줘. 긴 문단 말고, 1~2문장마다 한 줄씩 끊어서 보기 쉽게, 가독성 좋게 답변해줘. 가족한테 부탁하라거나 주변 사람들한테 부탁하라는 말은 하면 안돼..!!";
 
         var requestBody = new
         {

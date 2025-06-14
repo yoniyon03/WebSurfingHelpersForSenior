@@ -1009,48 +1009,40 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
         }
 
 
-        private async void SearchOnCurrentPageOrFallback(string keyword)
+        private void SearchOnCurrentPageOrFallback(string keyword)
         {
-            string jsKeyword = EscapeForJs(keyword); // 따옴표 등 JS 문자열용 이스케이프
+            string baseUrl = Properties.Settings.Default.HomeUrl;
 
-            string jsScript = $@"
-        (function() {{
-            var input = document.querySelector('input[type=search], input[name*=search], input[id*=search], input[class*=search]');
-            if (!input) return 'NO_SEARCH_INPUT_FOUND';
-
-            input.focus();
-            input.value = '{jsKeyword}';
-
-            // 이벤트 전파 (change, input 등)
-            var events = ['input', 'change', 'keydown', 'keyup', 'keypress'];
-            for (let evt of events) {{
-                var event = new Event(evt, {{ bubbles: true }});
-                input.dispatchEvent(event);
-            }}
-
-            // Enter 키 시뮬레이션
-            var enterEvent = new KeyboardEvent('keydown', {{
-                key: 'Enter',
-                keyCode: 13,
-                which: 13,
-                bubbles: true
-            }});
-            input.dispatchEvent(enterEvent);
-
-            return 'SEARCH_TRIGGERED';
-        }})();
-    ";
-
-            var result = await winFormsBrowser.EvaluateScriptAsync(jsScript);
-            string response = result?.Result?.ToString() ?? "";
-
-            if (response != "SEARCH_TRIGGERED")
+            if (string.IsNullOrWhiteSpace(baseUrl))
             {
-                // 실패 시 네이버 폴백
-                string fallbackUrl = $"https://search.naver.com/search.naver?query={Uri.EscapeDataString(keyword)}";
-                winFormsBrowser.Load(fallbackUrl);
+                CustomMessageBox.Show("홈 주소가 설정되지 않았습니다. 설정에서 먼저 지정해 주세요.", "알림", MessageBoxImage.Warning, this);
+                return;
             }
+
+            string lowerBase = baseUrl.ToLower();
+            string finalUrl;
+
+            if (lowerBase.Contains("naver.com"))
+            {
+                finalUrl = $"https://search.naver.com/search.naver?query={Uri.EscapeDataString(keyword)}";
+            }
+            else if (lowerBase.Contains("daum.net"))
+            {
+                finalUrl = $"https://search.daum.net/search?w=tot&q={Uri.EscapeDataString(keyword)}";
+            }
+            else if (lowerBase.Contains("google.com"))
+            {
+                finalUrl = $"https://www.google.com/search?q={Uri.EscapeDataString(keyword)}";
+            }
+            else
+            {
+                CustomMessageBox.Show("지원하지 않는 홈 주소입니다.\n네이버, 다음, 구글 중에서 선택해 주세요.", "알림", MessageBoxImage.Warning, this);
+                return;
+            }
+
+            winFormsBrowser.Load(finalUrl);
         }
+
 
 
 
@@ -1157,18 +1149,22 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             AiSmartSuggestionPanel.Visibility = Visibility.Collapsed;
         }
 
+
+
         private string FormatAiText(string raw)
         {
             if (string.IsNullOrEmpty(raw)) return "";
+
+            // 1️⃣ HTML 줄바꿈을 실제 줄바꿈으로 치환
+            raw = raw.Replace("<br>", "\n").Replace("<br/>", "\n").Replace("<br />", "\n");
 
             var sb = new StringBuilder();
             var lines = raw.Split('\n');
 
             foreach (var line in lines)
             {
-                string trimmed = line.Trim();
+                string trimmed = System.Net.WebUtility.HtmlDecode(line.Trim());
 
-                // 리스트 항목 또는 숫자 리스트
                 if (trimmed.StartsWith("- ") || trimmed.StartsWith("•") || trimmed.StartsWith("*") ||
                     System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^\d+[\).]\s"))
                 {
@@ -1176,7 +1172,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 }
                 else if (string.IsNullOrWhiteSpace(trimmed))
                 {
-                    sb.AppendLine(); // 공백 줄 유지
+                    sb.AppendLine(); // 빈 줄 유지
                 }
                 else
                 {
@@ -1186,6 +1182,8 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
             return sb.ToString();
         }
+
+
 
 
 
