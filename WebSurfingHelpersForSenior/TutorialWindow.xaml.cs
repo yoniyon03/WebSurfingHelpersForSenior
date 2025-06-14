@@ -28,6 +28,10 @@ namespace WebSurfingHelpersForSenior
         {
             Properties.Settings.Default.SkipTutorial = DontShowAgainCheck.IsChecked == true;
             Properties.Settings.Default.Save();
+
+            var main = new MainWindow();
+            main.Show();
+
             this.Close();
         }
     }

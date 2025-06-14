@@ -10,7 +10,7 @@
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="10,6"/>
-    
+
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -70,7 +70,7 @@
                         <TextBlock Text="홈" Margin="4 0 0 0" FontWeight="Bold" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
-                
+
                 <!-- 즐겨찾기 -->
                 <Button Style="{StaticResource RoundedButtonStyle}"
                     Width="90" Height="40" Margin="20, 0, 40, 0" ToolTip="즐겨찾기" Click="FavoritesButton_Click">
@@ -123,10 +123,10 @@
             </StackPanel>
         </StackPanel>
 
-        
+
         <wfi:WindowsFormsHost Grid.Row="1" Grid.Column="0" x:Name="browserHost" Margin="0,8" />
-  
-        
+
+
         <!-- AI 사이드바 -->
         <Border Grid.Row="1" Grid.Column="1" x:Name="aiSidebar" Background="#FFFDEFD0" BorderBrush="Gray" BorderThickness="1" Margin="10, 0, 10, 0">
             <Grid x:Name="AiSidebarGrid">
@@ -139,7 +139,7 @@
                         <Button Content="단어 뜻 알려줘" Click="ExplainWordButton_Click" Height="40" Margin="20" FontSize="14"/>
                         <Button Content="AI가 대신 찾아줘요" Click="ShowAiSearchPanel_Click" Height="40" Margin="20" FontSize="14"/>
                         <Button Content="관련 키워드 추천받기" Click="RecommendKeywordsButton_Click" Height="40" Margin="20" FontSize="14"/>
-                        
+
                         <!-- AI 제안 팝업 -->
                         <StackPanel x:Name="AiSmartSuggestionPanel" Visibility="Collapsed" Margin="10">
                             <TextBlock x:Name="AiSmartSuggestionText" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,10"/>
@@ -177,8 +177,8 @@
                         <TextBox x:Name="WhatIsThisPageResultTextBox" IsReadOnly="True" Text="" TextWrapping="Wrap" FontSize="14" Background="#FFFDEFD0"/>
                     </ScrollViewer>
                 </Grid>
-                
-                
+
+
                 <!-- 본문 내용 요약해서 보기 UI -->
                 <Grid x:Name="SummarizePagePanel" Visibility="Collapsed" Margin="10">
                     <Grid.RowDefinitions>
@@ -377,7 +377,10 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button
                         Style="{StaticResource RoundedButtonStyle}"
-                        Width="100" Height="40" Margin="4">
+                        Width="100" Height="40" Margin="4"
+                        IsHitTestVisible="False"
+                        Focusable="False"
+                        Cursor="Arrow">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Image Width="25" Height="25" Source="https://user-images.githubusercontent.com/537522/34322316-14a5c1a6-e839-11e7-8bdd-ecc63e88cdd5.png" />
                             <TextBlock Text=" 글자 크기 " FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>

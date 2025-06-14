@@ -85,10 +85,51 @@ namespace WebSurfingHelpersForSenior
         public MainWindow()
         {
             InitializeComponent();
-            this.Loaded += MainWindow_Loaded;
 
-            winFormsBrowser = new ChromiumWebBrowser("https://www.naver.com");
+            // 설정 복원
+            currentZoomLevel = Properties.Settings.Default.ZoomLevel;
+            currentFontSize = Properties.Settings.Default.FontScale;
+            isMediaFilterOff = Properties.Settings.Default.MediaFilterOff;
+            isHighContrast = Properties.Settings.Default.HighContrastEnabled;
+
+            // 고대비 WPF UI 복원
+            if (isHighContrast)
+            {
+                MediaFilterToggleButton.Visibility = Visibility.Visible;
+                MediaFilterButtonText.Text = isMediaFilterOff ? "사진 고대비 적용" : "사진 원본 보기";
+
+                var bg = System.Windows.Media.Brushes.Black;
+                var fg = System.Windows.Media.Brushes.Yellow;
+                var border = System.Windows.Media.Brushes.Orange;
+                var weight = FontWeights.Bold;
+
+                this.Background = bg;
+
+                foreach (var ctrl in LogicalTreeHelper.GetChildren(this))
+                {
+                    if (ctrl is Control c)
+                    {
+                        c.Background = bg;
+                        c.Foreground = fg;
+                        c.FontWeight = weight;
+
+                        if (c is Button || c is ToggleButton)
+                            c.BorderBrush = border;
+                    }
+                }
+            }
+
+            // 주소 설정 (비우고 먼저 생성)
+            string url = Properties.Settings.Default.LastVisitedUrl;
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                url = "https://www.naver.com";
+            }
+
+            // 브라우저 생성 및 설정
+            winFormsBrowser = new ChromiumWebBrowser(url);
             winFormsBrowser.LifeSpanHandler = new CustomLifeSpanHandler(); // 팝업차단
+            browserHost.Child = winFormsBrowser;
 
             winFormsBrowser.FrameLoadEnd += (sender, args) =>
             {
@@ -170,22 +211,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
         }
 
-        // 튜토리얼 창 보여주기
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            // 앱 시작 시 사용자 지정 폰트 적용 안 되게 초기화 (필요 시 지우기)
-            Properties.Settings.Default.IsFontCustomized = false;
-            Properties.Settings.Default.SkipTutorial = false;
-            Properties.Settings.Default.Save();
-
-            if (!Properties.Settings.Default.SkipTutorial)
-            {
-                var tutorial = new TutorialWindow();
-                tutorial.Owner = this;
-                tutorial.ShowDialog();
-            }
-        }
-
         // 폰트 변경
         public void ApplyBrowserFont(System.Drawing.Font fontName)
         {
@@ -218,9 +243,15 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 백그라운드 실행 막음
+        // 프로그래밍 종료 시 마지막 주소 저장
         private void MainWindow_Closed(object sender, EventArgs e)
         {
+            if (!string.IsNullOrWhiteSpace(winFormsBrowser.Address))
+            {
+                Properties.Settings.Default.LastVisitedUrl = winFormsBrowser.Address;
+            }
+
+            Properties.Settings.Default.Save();
             winFormsBrowser.Dispose();
             Application.Current.Shutdown();
         }
@@ -230,6 +261,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
         {
             currentZoomLevel += 0.15;
             winFormsBrowser.SetZoomLevel(currentZoomLevel);
+
+            Properties.Settings.Default.ZoomLevel = currentZoomLevel;
+            Properties.Settings.Default.Save();
         }
 
         // 축소
@@ -237,6 +271,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
         {
             currentZoomLevel -= 0.15;
             winFormsBrowser.SetZoomLevel(currentZoomLevel);
+
+            Properties.Settings.Default.ZoomLevel = currentZoomLevel;
+            Properties.Settings.Default.Save();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -531,6 +568,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 string script = GetHighContrastScript(isHighContrast, !isMediaFilterOff);
                 winFormsBrowser.ExecuteScriptAsync(script);
             }
+
+            Properties.Settings.Default.MediaFilterOff = isMediaFilterOff;
+            Properties.Settings.Default.Save();
         }
 
         // 폰트 크기 증가
@@ -573,6 +613,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
     ";
 
             winFormsBrowser.ExecuteScriptAsync(script);
+
+            Properties.Settings.Default.FontScale = scale;
+            Properties.Settings.Default.Save();
         }
 
         // 홈화면 이동
@@ -605,10 +648,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 Properties.Settings.Default.IsFontCustomized = true;
                 Properties.Settings.Default.Save();
 
-                if (this.Owner is MainWindow main)
-                {
-                    main.ApplyBrowserFont(fontDialog.Font);
-                }
+                ApplyBrowserFont(fontDialog.Font);
             }
         }
 
@@ -630,7 +670,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
- // AI 부분
+        // AI 부분
         private async void WhatIsThisPageButton_Click(object sender, RoutedEventArgs e)
         {
             var browser = winFormsBrowser;
@@ -1132,7 +1172,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
                 AiExplanationTitle.Text = $"📝 {topic}";
                 AiExplanationContent.Text = explanation;
-              
+
             }
             catch (Exception ex)
             {
@@ -1147,7 +1187,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
 
 
-     
+
 
 
 

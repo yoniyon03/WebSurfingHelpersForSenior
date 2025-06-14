@@ -24,6 +24,22 @@ namespace WebSurfingHelpersForSenior
         public SetHomePageWindow()
         {
             InitializeComponent();
+            Loaded += SetHomePageWindow_Loaded;
+        }
+
+        // 저장된 홈 주소를 입력창에 표시
+        private void SetHomePageWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            string savedUrl = Properties.Settings.Default.HomeUrl;
+
+            if (!string.IsNullOrWhiteSpace(savedUrl))
+            {
+                UrlTextBox.Text = savedUrl;
+            }
+            else
+            {
+                UrlTextBox.Text = "https://www.naver.com"; // 기본값
+            }
         }
 
         private void Naver_Click(object sender, RoutedEventArgs e)
