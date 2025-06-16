@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -13,10 +12,6 @@ public class GeminiService
 {
     private readonly string apiKey = "AIzaSyBgv-ZfAqxf4sSHPCCalxzIfSZIFsogGRM";
     private readonly HttpClient httpClient = new HttpClient();
-
-
-
-
 
     public async Task<string> AskWhatIsThisPage(string currentUrl)
     { 
@@ -91,9 +86,6 @@ public class GeminiService
         {
             return $"[JSON 파싱 실패] {ex.Message}\n원본 응답:\n{responseContent}";
         }
-
-
-
     }
 
 
@@ -228,6 +220,7 @@ public class GeminiService
         }
     }
 
+
     public async Task<string> AnswerForUserQuery(string query)
     {
         var endpoint = $"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={apiKey}";
@@ -297,7 +290,6 @@ public class GeminiService
 
 
 
-    // 키워드로 웹서핑 유도
     public async Task<List<string>> RecommendKeywordsFromPageText(string pageText)
     {
         var endpoint = $"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={apiKey}";
@@ -336,7 +328,7 @@ public class GeminiService
         {
             response = await httpClient.SendAsync(request);
             json = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine("✅ Gemini 응답 원문:\n" + json);  // ✅ Gemini 응답 로그 출력
+            Debug.WriteLine("✅ Gemini 응답 원문:\n" + json);
         }
         catch (Exception ex)
         {
@@ -350,14 +342,12 @@ public class GeminiService
         {
             doc = JsonDocument.Parse(json);
 
-            // 에러 응답 처리
             if (doc.RootElement.TryGetProperty("error", out var error))
             {
                 var message = error.TryGetProperty("message", out var msg) ? msg.GetString() : "알 수 없는 오류";
                 throw new Exception("Gemini 오류: " + message);
             }
 
-            // 텍스트 추출
             string rawText = doc.RootElement
                 .GetProperty("candidates")[0]
                 .GetProperty("content")
@@ -372,7 +362,7 @@ public class GeminiService
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    string trimmed = line.Trim(); // 더 이상 '-' 안 자름
+                    string trimmed = line.Trim();
                     if (!string.IsNullOrWhiteSpace(trimmed))
                         keywords.Add(trimmed);
                 }
@@ -389,9 +379,6 @@ public class GeminiService
             doc?.Dispose();
         }
     }
-
-
-
 
 
     public async Task<string> GetRecommendation(string prompt)
@@ -422,7 +409,6 @@ public class GeminiService
 
             using (var doc = JsonDocument.Parse(json))
             {
-                // 에러 응답 처리
                 if (doc.RootElement.TryGetProperty("error", out var error))
                 {
                     var msg = error.TryGetProperty("message", out var m) ? m.GetString() : "알 수 없는 오류";
@@ -442,7 +428,6 @@ public class GeminiService
             return "[추가 설명 실패] " + ex.Message;
         }
     }
-
 
 
     public async Task<string> GenerateSuggestionFromText(string pageText)
@@ -534,8 +519,6 @@ public class GeminiService
             if (doc != null) doc.Dispose();
         }
     }
-
-
 }
 
 

@@ -3,15 +3,10 @@ using CefSharp.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Net.Http;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Forms.Integration;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -21,7 +16,6 @@ using WinForms = System.Windows.Forms;
 
 namespace WebSurfingHelpersForSenior
 {
-    // 팝업 차단
     public class CustomLifeSpanHandler : ILifeSpanHandler
     {
         public bool DoClose(IWebBrowser chromiumWebBrowser, IBrowser browser) => false;
@@ -45,9 +39,8 @@ namespace WebSurfingHelpersForSenior
         {
             newBrowser = null;
 
-            // 새 창 대신 현재 탭에서 열기
             chromiumWebBrowser.Load(targetUrl);
-            return true; // 팝업 차단
+            return true; 
         }
     }
 
@@ -69,30 +62,22 @@ namespace WebSurfingHelpersForSenior
         private bool isHighContrast = false;
 
         // 이미지 고대비 필터
-        private bool isMediaFilterOff = false; // 기본값 - 필터 on
+        private bool isMediaFilterOff = false;
 
         // 글씨 크기
         private double currentFontSize = 1.0;
-
-
-
-
-
-
-
 
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // 설정 복원
             currentZoomLevel = Properties.Settings.Default.ZoomLevel;
             currentFontSize = Properties.Settings.Default.FontScale;
             isMediaFilterOff = Properties.Settings.Default.MediaFilterOff;
             isHighContrast = Properties.Settings.Default.HighContrastEnabled;
 
-            // 고대비 WPF UI 복원
+
             if (isHighContrast)
             {
                 MediaFilterToggleButton.Visibility = Visibility.Visible;
@@ -119,14 +104,12 @@ namespace WebSurfingHelpersForSenior
                 }
             }
 
-            // 주소 설정 (비우고 먼저 생성)
             string url = Properties.Settings.Default.LastVisitedUrl;
             if (string.IsNullOrWhiteSpace(url))
             {
                 url = "https://www.naver.com";
             }
 
-            // 브라우저 생성 및 설정
             winFormsBrowser = new ChromiumWebBrowser(url);
             winFormsBrowser.LifeSpanHandler = new CustomLifeSpanHandler(); // 팝업차단
             browserHost.Child = winFormsBrowser;
@@ -154,7 +137,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                             args.Frame.ExecuteJavaScriptAsync(contrastScript);
                         }
 
-                        // 폰트 커스터마이징한 경우에만 적용
                         if (Properties.Settings.Default.IsFontCustomized)
                         {
                             string fontName = Properties.Settings.Default.SelectedFontName;
@@ -178,7 +160,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             browserHost.Child = winFormsBrowser;
 
 
-            //  웹페이지 로딩 완료 후 AI 제안 체크 연결
             winFormsBrowser.FrameLoadEnd += async (sender, args) =>
             {
                 if (args.Frame.IsMain)
@@ -189,7 +170,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                     });
 
 
-                    // 관련 키워드 추천 창이 열려 있을 때만 호출
                     if (AiKeywordPagePanel.Visibility == Visibility.Visible)
                     {
                         await Dispatcher.InvokeAsync(() =>
@@ -199,24 +179,18 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                     }
                 }
             };
-
-
-            // 음성 완료 이벤트 등록
+            
             ttsService.SpeakCompleted += TtsService_SpeakCompleted;
 
             this.Closed += MainWindow_Closed;
-
-
-
-
         }
 
-        // 폰트 변경
+
+
         public void ApplyBrowserFont(System.Drawing.Font fontName)
         {
             if (winFormsBrowser.IsBrowserInitialized)
             {
-                // 스타일 분기
                 string fontWeight = fontName.Bold ? "bold" : "normal";
                 string fontStyle = fontName.Italic ? "italic" : "normal";
                 string fontSize = $"{fontName.SizeInPoints}px";
@@ -243,7 +217,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 프로그래밍 종료 시 마지막 주소 저장
+        
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(winFormsBrowser.Address))
@@ -256,7 +230,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             Application.Current.Shutdown();
         }
 
-        // 확대
+
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
             currentZoomLevel += 0.15;
@@ -266,7 +240,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             Properties.Settings.Default.Save();
         }
 
-        // 축소
+
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             currentZoomLevel -= 0.15;
@@ -306,7 +280,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
             string selectedText = "";
 
-            // 1️⃣ 웹브라우저 안에서 선택된 텍스트 가져오기
             string jsGetSelectedText = @"
 (() => {
   try {
@@ -341,7 +314,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 selectedText = browserText;
             }
 
-            // 2️⃣ 사이드바 TextBox 중 선택된 텍스트 가져오기
+
             if (string.IsNullOrWhiteSpace(selectedText))
             {
                 foreach (var child in LogicalTreeHelper.GetChildren(this))
@@ -364,7 +337,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
 
 
-            // 3️⃣ 그래도 텍스트가 없다면, 웹페이지 "본문" 추출해서 읽기
             if (string.IsNullOrWhiteSpace(selectedText))
             {
                 string jsMainTextScript = @"
@@ -439,9 +411,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-
-
-
         private void TtsService_SpeakCompleted(object sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -452,8 +421,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             });
         }
 
-
-        // 설정 버튼 클릭 이벤트
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -468,35 +435,31 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 고대비
         private void HighContrast_Click(object sender, RoutedEventArgs e)
         {
-            // 토글 상태 전환
             isHighContrast = !isHighContrast;
 
-            // 고대비 켜질 때는 이미지 필터 원본 보기 상태로 시작
             if (isHighContrast)
             {
                 isMediaFilterOff = false;
                 MediaFilterButtonText.Text = "사진 고대비 적용";
-                MediaFilterToggleButton.Visibility = Visibility.Visible; // 버튼 보이기
+                MediaFilterToggleButton.Visibility = Visibility.Visible; 
             }
             else
             {
-                MediaFilterToggleButton.Visibility = Visibility.Collapsed; // 버튼 숨기기
+                MediaFilterToggleButton.Visibility = Visibility.Collapsed; 
             }
 
-            // 색상 정의
+
             var bg = isHighContrast ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.White;
             var fg = isHighContrast ? System.Windows.Media.Brushes.Yellow : System.Windows.Media.Brushes.Black;
             var border = isHighContrast ? System.Windows.Media.Brushes.Orange : System.Windows.Media.Brushes.Gray;
             var weight = isHighContrast ? FontWeights.Bold : FontWeights.Normal;
 
 
-            // 윈도우 전체 배경
             this.Background = bg;
 
-            // 주요 WPF 컨트롤 스타일 변경
+          
             foreach (var ctrl in LogicalTreeHelper.GetChildren(this))
             {
                 if (ctrl is Control c)
@@ -511,12 +474,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                     }
                 }
             }
-
-            // CefSharp 고대비 적용
             var chrome = browserHost.Child as CefSharp.WinForms.ChromiumWebBrowser;
             if (chrome != null && chrome.IsBrowserInitialized)
             {
-                /*bool applyMediaFilter = !isMediaFilterOff;*/
                 string script = GetHighContrastScript(isHighContrast, applyMediaFilter: false);
                 chrome.ExecuteScriptAsync(script);
             }
@@ -525,7 +485,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             Properties.Settings.Default.Save();
         }
 
-        // img, video 포함 고대비 적용
+    
         private string GetHighContrastScript(bool enabled, bool applyMediaFilter)
         {
             return enabled
@@ -556,13 +516,12 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 ";
         }
 
-        // 사진 고대비 적용
+
         private void MediaFilterToggle_Click(object sender, RoutedEventArgs e)
         {
             isMediaFilterOff = !isMediaFilterOff;
             MediaFilterButtonText.Text = isMediaFilterOff ? "사진 고대비 적용" : "사진 원본 보기";
 
-            // 필터 꺼져 있다면 다시 고대비 적용 (고대비가 켜져 있을 때만)
             if (isHighContrast && winFormsBrowser.IsBrowserInitialized)
             {
                 string script = GetHighContrastScript(isHighContrast, !isMediaFilterOff);
@@ -573,7 +532,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             Properties.Settings.Default.Save();
         }
 
-        // 폰트 크기 증가
+ 
         private void IncreaseFontSize_Click(object sender, RoutedEventArgs e)
         {
             if (currentFontSize < 2.0) // 최대 200%
@@ -583,7 +542,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 폰트 크기 감소
+
         private void DecreaseFontSize_Click(object sender, RoutedEventArgs e)
         {
             if (currentFontSize > 0.5) // 최소 50%
@@ -593,7 +552,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 폰트 크기
+
         private void ApplyFontScale(double scale)
         {
             string script = $@"
@@ -618,7 +577,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             Properties.Settings.Default.Save();
         }
 
-        // 홈화면 이동
+
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
             string homepage = Properties.Settings.Default.HomeUrl;
@@ -633,14 +592,13 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 폰트 변경
+
         private void ChangeFont_Click(object sender, RoutedEventArgs e)
         {
             var fontDialog = new WinForms.FontDialog();
 
             if (fontDialog.ShowDialog() == WinForms.DialogResult.OK)
             {
-                // 설정 저장
                 Properties.Settings.Default.SelectedFontName = fontDialog.Font.Name;
                 Properties.Settings.Default.SelectedFontSize = fontDialog.Font.SizeInPoints;
                 Properties.Settings.Default.IsFontBold = fontDialog.Font.Bold;
@@ -652,7 +610,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // 즐겨찾기
+
         private void FavoritesButton_Click(object sender, RoutedEventArgs e)
         {
             var favWindow = new FavoriteWindow();
@@ -670,7 +628,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
         }
 
-        // AI 부분
+
         private async void WhatIsThisPageButton_Click(object sender, RoutedEventArgs e)
         {
             var browser = winFormsBrowser;
@@ -691,7 +649,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             WhatIsThisLoadingBar.Visibility = Visibility.Visible;
             WhatIsThisPageResultTextBox.Text = "AI가 설명을 가져오는 중이에요. 잠시만 기다려주세요...";
 
-            await Dispatcher.Yield(); // ✅ UI 반영 보장
+            await Dispatcher.Yield(); 
 
             try
             {
@@ -728,7 +686,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 return;
             }
 
-            SummarizeLoadingBar.Visibility = Visibility.Visible; // ✅ 로딩 시작
+            SummarizeLoadingBar.Visibility = Visibility.Visible; 
 
             try
             {
@@ -742,7 +700,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
             finally
             {
-                SummarizeLoadingBar.Visibility = Visibility.Collapsed; // ✅ 로딩 종료
+                SummarizeLoadingBar.Visibility = Visibility.Collapsed; 
             }
 
             AiMainMenuPanel.Visibility = Visibility.Collapsed;
@@ -776,10 +734,8 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 var gemini = new GeminiService();
                 string explanation = await gemini.ExplainWordMeaning(word);
 
-                // 단어 뜻을 표시
                 WordExplanationTextBox.Text = FormatAiText(explanation);
 
-                // 사이드바 패널 표시
                 AiMainMenuPanel.Visibility = Visibility.Collapsed;
                 ExplainWordPanel.Visibility = Visibility.Visible;
             }
@@ -789,7 +745,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
             finally
             {
-                ExplainWordLoadingBar.Visibility = Visibility.Collapsed; // ✅ 로딩 종료
+                ExplainWordLoadingBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -799,11 +755,9 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             string topic = AiExplanationTitle.Text?.Replace("📝", "").Trim();
             if (string.IsNullOrEmpty(topic)) return;
 
-            // ✅ 일단 로딩 UI 표시 먼저
             AiExplanationLoadingBar.Visibility = Visibility.Visible;
             AiExplanationContent.Text = "AI가 천천히 설명을 준비 중이에요...";
 
-            //// ✅ 렌더링 보장
             //await Dispatcher.Yield();
 
             try
@@ -824,7 +778,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 AiExplanationLoadingBar.Visibility = Visibility.Collapsed;
             }
 
-            // ✅ 작업 끝난 후 패널 전환
             AiMainMenuPanel.Visibility = Visibility.Collapsed;
             AiSmartSuggestionPanel.Visibility = Visibility.Collapsed;
             AiExplanationPanel.Visibility = Visibility.Visible;
@@ -836,16 +789,14 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             string topic = AiExplanationTitle.Text?.Replace("📝", "").Trim();
             if (string.IsNullOrEmpty(topic)) return;
 
-            // ✅ 먼저 패널 전환
             AiMainMenuPanel.Visibility = Visibility.Collapsed;
             AiSmartSuggestionPanel.Visibility = Visibility.Collapsed;
             AiExplanationPanel.Visibility = Visibility.Visible;
 
-            // ✅ 로딩바 표시
             AiExplanationLoadingBar.Visibility = Visibility.Visible;
             AiExplanationContent.Text = "AI가 천천히 설명을 준비 중이에요...";
 
-            await Dispatcher.Yield(); // ✅ UI 반영 먼저 시킴 (로딩바 보이게)
+            await Dispatcher.Yield();
 
             try
             {
@@ -865,12 +816,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 AiExplanationLoadingBar.Visibility = Visibility.Collapsed;
             }
         }
-
-
-
-
-
-
 
 
         private async void AiHelpSearchButton_Click(object sender, RoutedEventArgs e)
@@ -911,23 +856,22 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
 
 
 
-        // 'AI가 대신 찾아줘요' 클릭 시: 검색 UI로 전환
         private void ShowAiSearchPanel_Click(object sender, RoutedEventArgs e)
         {
             AiMainMenuPanel.Visibility = Visibility.Collapsed;
             AiSearchPanel.Visibility = Visibility.Visible;
-            AiSearchResultTextBox.Text = ""; // 초기화
+            AiSearchResultTextBox.Text = ""; 
         }
 
 
 
-        // 뒤로가기 클릭 시: 다시 메뉴로 복귀 (기능별)
+
+
         private void BackToAiMenu_Click1(object sender, RoutedEventArgs e)
         {
             WhatIsThisPagePanel.Visibility = Visibility.Collapsed;
             AiMainMenuPanel.Visibility = Visibility.Visible;
         }
-
 
         private void BackToAiMenu_Click2(object sender, RoutedEventArgs e)
         {
@@ -935,7 +879,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             AiSearchResultPanel.Visibility = Visibility.Collapsed; // 이 줄 추가
             AiMainMenuPanel.Visibility = Visibility.Visible;
         }
-
 
         private void BackToAiMenu_Click3(object sender, RoutedEventArgs e)
         {
@@ -949,14 +892,12 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             AiMainMenuPanel.Visibility = Visibility.Visible;
         }
 
-        // 본문 내용 요약 뒤로가기 버튼 클릭 시
         private void BackToAiMenu_Click5(object sender, RoutedEventArgs e)
         {
             SummarizePagePanel.Visibility = Visibility.Collapsed;
             AiMainMenuPanel.Visibility = Visibility.Visible;
         }
 
-        // 단어 뜻 알려주기 뒤로가기 버튼 클릭 시
         private void BackToAiMenu_Click6(object sender, RoutedEventArgs e)
         {
             ExplainWordPanel.Visibility = Visibility.Collapsed;
@@ -976,7 +917,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             AiKeywordPagePanel.Visibility = Visibility.Visible;
 
             WhatIsThisPageResultTextBox.Text = "AI가 추천 키워드를 가져오는 중이에요...";
-            AiKeywordLoadingBar.Visibility = Visibility.Visible; // ✅ 로딩 시작
+            AiKeywordLoadingBar.Visibility = Visibility.Visible; 
 
             var gemini = new GeminiService();
 
@@ -984,7 +925,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             if (!result.Success || !(result.Result is string pageText) || string.IsNullOrWhiteSpace(pageText))
             {
                 WhatIsThisPageResultTextBox.Text = "페이지 본문을 읽을 수 없어요.";
-                AiKeywordLoadingBar.Visibility = Visibility.Collapsed; // ✅ 로딩 종료
+                AiKeywordLoadingBar.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -1022,7 +963,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
             finally
             {
-                AiKeywordLoadingBar.Visibility = Visibility.Collapsed; // ✅ 로딩 종료
+                AiKeywordLoadingBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -1149,7 +1090,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             string topic = AiSmartSuggestionText.Text?.Trim();
             if (string.IsNullOrEmpty(topic)) return;
 
-            AiExplanationLoadingBar.Visibility = Visibility.Visible; // ✅ 로딩 시작
+            AiExplanationLoadingBar.Visibility = Visibility.Visible;
 
             try
             {
@@ -1172,7 +1113,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
             }
             finally
             {
-                AiExplanationLoadingBar.Visibility = Visibility.Collapsed; // ✅ 로딩 종료
+                AiExplanationLoadingBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -1195,7 +1136,6 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
         {
             if (string.IsNullOrEmpty(raw)) return "";
 
-            // 1️⃣ HTML 줄바꿈을 실제 줄바꿈으로 치환
             raw = raw.Replace("<br>", "\n").Replace("<br/>", "\n").Replace("<br />", "\n");
 
             var sb = new StringBuilder();
@@ -1212,7 +1152,7 @@ Array.from(document.querySelectorAll('img')).forEach(img => {
                 }
                 else if (string.IsNullOrWhiteSpace(trimmed))
                 {
-                    sb.AppendLine(); // 빈 줄 유지
+                    sb.AppendLine();
                 }
                 else
                 {

@@ -29,7 +29,7 @@ namespace WebSurfingHelpersForSenior
             else
             {
                 var tutorial = new TutorialWindow();
-                tutorial.Show(); // 팝업 먼저 띄우기, 이 안에서 MainWindow 열도록 처리
+                tutorial.Show(); 
             }
         }
     }

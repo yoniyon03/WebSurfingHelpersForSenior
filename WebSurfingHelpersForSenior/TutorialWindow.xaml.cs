@@ -26,11 +26,9 @@ namespace WebSurfingHelpersForSenior
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            // ✅ 튜토리얼 단계 창 열기
             var stepsWindow = new TutorialStepsWindow();
             stepsWindow.Show();
 
-            // ✅ 현재 인트로 창 닫기
             this.Close();
         }
 

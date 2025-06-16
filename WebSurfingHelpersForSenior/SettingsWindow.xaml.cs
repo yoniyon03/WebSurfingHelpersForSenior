@@ -13,7 +13,6 @@ namespace WebSurfingHelpersForSenior
             tts = ttsService;
         }
 
-        // 음성 설정 버튼 → 새 창으로 열기
         private void ShowVoiceSettings_Click(object sender, RoutedEventArgs e)
         {
             var voiceWindow = new VoiceSettingsWindow(tts);
@@ -21,7 +20,7 @@ namespace WebSurfingHelpersForSenior
             voiceWindow.ShowDialog();
         }
 
-        // 홈 주소 설정 버튼
+
         private void SetHomeUrl_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new SetHomePageWindow();
